@@ -1,4 +1,5 @@
 #!/bin/bash
 set -x
 
-docker build -t markformware/ultibo . |& tee build.log
+cp ../build-examples.sh .
+docker build -t markformware/ultibo-gitpod -f ultibo-gitpod.dockerfile . |& tee build.log

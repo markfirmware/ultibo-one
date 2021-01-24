@@ -1,4 +1,4 @@
-FROM gitpod/workspace-dotnet-vnc
+FROM gitpod/workspace-full-vnc
 
 USER gitpod
 
@@ -122,7 +122,28 @@ RUN cd /home/gitpod/ultibo/core/fpc/bin && \
     echo '-Fu/home/gitpod/ultibo/core/fpc/units/armv7-ultibo/packages' >> qemuvpb.cfg && \
     echo '-Fl/home/gitpod/ultibo/core/fpc/units/armv7-ultibo/lib' >> qemuvpb.cfg
 
-RUN sudo apt-get update && mkdir /home/gitpod/test
+RUN mkdir /home/gitpod/ninja && \
+    cd /home/gitpod/ninja && \
+    wget -q https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip && \
+    unzip ninja-linux.zip && \
+    export PATH=/home/gitpod/ninja:$PATH && \
+    cd /home/gitpod && \
+    wget -q https://download.qemu.org/qemu-5.2.0.tar.xz && \
+    tar Jxf qemu-5.2.0.tar.xz && \
+    cd qemu-5.2.0 && \
+    mkdir build && \
+    cd build && \
+    sudo apt-get install -y libgtk-3-dev && \
+    ../configure --enable-gtk --target-list=arm-softmmu && \
+    make -j 6 && \
+    sudo make install
+
+RUN mkdir /home/gitpod/test
 WORKDIR /home/gitpod/test
 COPY build-examples.sh .
 RUN ./build-examples.sh
+
+WORKDIR /home/gitpod
+RUN rm -rf test/ ninja/ qemu-5.2.0* && \
+    ls
+
