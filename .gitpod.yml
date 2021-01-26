@@ -1,1 +1,14 @@
 image: markformware/ultibo-gitpod
+
+ports:
+  - port: 5080
+    onOpen: open-browser
+  - port: 5900
+    onOpen: ignore
+  - port: 6080
+    onOpen: open-browser
+
+tasks:
+  - name: examples
+    init: ./build-examples.sh
+    command: ./run-example 01
